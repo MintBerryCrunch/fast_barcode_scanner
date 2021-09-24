@@ -40,7 +40,8 @@ abstract class FastBarcodeScannerPlatform extends PlatformInterface {
       Resolution resolution,
       Framerate framerate,
       DetectionMode detectionMode,
-      CameraPosition position) {
+      CameraPosition position,
+      [ImageInversion imageInversion = ImageInversion.none]) {
     throw UnimplementedError('init() has not been implemented');
   }
 

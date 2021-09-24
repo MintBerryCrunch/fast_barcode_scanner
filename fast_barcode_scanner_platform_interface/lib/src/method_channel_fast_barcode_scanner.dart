@@ -20,7 +20,8 @@ class MethodChannelFastBarcodeScanner extends FastBarcodeScannerPlatform {
       Resolution resolution,
       Framerate framerate,
       DetectionMode detectionMode,
-      CameraPosition position) async {
+      CameraPosition position,
+      [ImageInversion imageInversion = ImageInversion.none]) async {
     _channel.setMethodCallHandler((call) async {
       switch (call.method) {
         case 'read':
@@ -40,7 +41,8 @@ class MethodChannelFastBarcodeScanner extends FastBarcodeScannerPlatform {
       'mode': describeEnum(detectionMode),
       'res': describeEnum(resolution),
       'fps': describeEnum(framerate),
-      'pos': describeEnum(position)
+      'pos': describeEnum(position),
+      'inv': describeEnum(imageInversion)
     });
 
     return PreviewConfiguration(response);
