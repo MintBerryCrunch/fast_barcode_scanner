@@ -44,6 +44,10 @@ enum class CameraPosition {
     front, back;
 }
 
+enum class ImageInversion {
+    none, invertAllFrames, alternateFrameInversion;
+}
+
 val barcodeFormatMap = hashMapOf(
         "aztec" to Barcode.FORMAT_AZTEC,
         "code128" to Barcode.FORMAT_CODE_128,
