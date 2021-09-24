@@ -23,6 +23,10 @@ enum CameraPosition { front, back }
 /// Image inversion mode (to support barcodes in inverted colors).
 /// The inversion is applied to the recognition stream only. Camera preview always stays unchanged.
 /// Currently, only images of YUV_420_888 format can be inverted.
+///
+/// This is an Android-only feature.
+/// (Apparently, Google ML kit does not support inverted data matrix barcodes, and this is a workaround to support them.
+/// On the other hand, iOS Vision supports them out-of-the-box, so no manual inversion is needed.)
 enum ImageInversion {
 
   /// All frames are kept as is. This is the default option.
