@@ -53,6 +53,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
         framerate: Framerate.fps30,
         mode: DetectionMode.pauseVideo,
         position: CameraPosition.back,
+        imageInversion: ImageInversion.alternateFrameInversion,
         onScan: (code) => codeStream.add(code),
         children: [
           const MaterialPreviewOverlay(animateDetection: false),
