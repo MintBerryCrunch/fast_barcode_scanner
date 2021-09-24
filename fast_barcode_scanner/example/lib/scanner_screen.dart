@@ -46,15 +46,14 @@ class _ScannerScreenState extends State<ScannerScreen> {
       ),
       body: BarcodeCamera(
         types: const [
-          BarcodeType.ean8,
-          BarcodeType.ean13,
           BarcodeType.code128,
-          BarcodeType.qr
+          BarcodeType.dataMatrix
         ],
         resolution: Resolution.hd720,
         framerate: Framerate.fps30,
         mode: DetectionMode.pauseVideo,
         position: CameraPosition.back,
+        imageInversion: ImageInversion.alternateFrameInversion,
         onScan: (code) => codeStream.add(code),
         children: [
           const MaterialPreviewOverlay(animateDetection: false),

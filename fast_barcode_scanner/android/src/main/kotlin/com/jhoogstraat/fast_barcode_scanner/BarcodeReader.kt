@@ -23,7 +23,7 @@ import java.util.ArrayList
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-data class CameraConfig(val formats: IntArray, val mode: DetectionMode, val resolution: Resolution, val framerate: Framerate, val position: CameraPosition)
+data class CameraConfig(val formats: IntArray, val mode: DetectionMode, val resolution: Resolution, val framerate: Framerate, val position: CameraPosition, val imageInversion: ImageInversion)
 
 class BarcodeReader(private val flutterTextureEntry: TextureRegistry.SurfaceTextureEntry, private val listener: (List<Barcode>) -> Unit) : RequestPermissionsResultListener {
     /* Android Lifecycle */
@@ -70,7 +70,8 @@ class BarcodeReader(private val flutterTextureEntry: TextureRegistry.SurfaceText
                 DetectionMode.valueOf(args["mode"] as String),
                 Resolution.valueOf(args["res"] as String),
                 Framerate.valueOf(args["fps"] as String),
-                CameraPosition.valueOf(args["pos"] as String)
+                CameraPosition.valueOf(args["pos"] as String),
+                ImageInversion.valueOf(args["inv"] as String)
         )
 
         if (allPermissionsGranted()) {
@@ -125,7 +126,7 @@ class BarcodeReader(private val flutterTextureEntry: TextureRegistry.SurfaceText
                 .setBarcodeFormats(0, *cameraConfig.formats)
                 .build()
 
-        barcodeDetector = MLKitBarcodeDetector(options, OnSuccessListener { codes ->
+        barcodeDetector = MLKitBarcodeDetector(options, cameraConfig.imageInversion, OnSuccessListener { codes ->
             if (!pauseDetection && codes.isNotEmpty()) {
                 if (cameraConfig.mode == DetectionMode.pauseDetection) {
                     pauseDetection = true
@@ -209,5 +210,4 @@ class BarcodeReader(private val flutterTextureEntry: TextureRegistry.SurfaceText
         private const val REQUEST_CODE_PERMISSIONS = 10
         private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     }
-
 }

@@ -1,3 +1,7 @@
+## 1.0.5
+
+* ImageInversion argument of init method added.
+
 ## 1.0.4
 
 * Smaller code cleanups
