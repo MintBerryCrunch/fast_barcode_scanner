@@ -1,3 +1,7 @@
+## 2.0.0-dev.3
+
+* ImageInversion argument of init method added.
+
 ## 2.0.0
 
 * Add ability to update the scanner configuration.
