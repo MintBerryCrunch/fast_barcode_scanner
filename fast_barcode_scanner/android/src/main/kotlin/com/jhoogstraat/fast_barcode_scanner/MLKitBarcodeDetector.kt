@@ -1,5 +1,6 @@
 package com.jhoogstraat.fast_barcode_scanner
 
+import android.util.Log
 import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
@@ -9,23 +10,31 @@ import com.google.mlkit.vision.barcode.Barcode
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.text.Text
+import com.google.mlkit.vision.text.TextRecognition
+import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 
 class MLKitBarcodeDetector(
-        options: BarcodeScannerOptions,
-        imageInversion: ImageInversion,
-        private val successListener: OnSuccessListener<List<Barcode>>,
-        private val failureListener: OnFailureListener
+    options: BarcodeScannerOptions,
+    imageInversion: ImageInversion,
+    private val successListener: OnSuccessListener<Text>,
+    private val failureListener: OnFailureListener
 ) : ImageAnalysis.Analyzer {
     private val scanner = BarcodeScanning.getClient(options)
     private val invertor = ImageInvertor(imageInversion)
+    private val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
     @ExperimentalGetImage
     override fun analyze(imageProxy: ImageProxy) {
         val inputImage = preprocessImage(imageProxy)
-        scanner.process(inputImage)
-                .addOnSuccessListener(successListener)
-                .addOnFailureListener(failureListener)
-                .addOnCompleteListener { imageProxy.close() }
+//        scanner.process(inputImage)
+//                .addOnSuccessListener(successListener)
+//                .addOnFailureListener(failureListener)
+//                .addOnCompleteListener { imageProxy.close() }
+        textRecognizer.process(inputImage)
+            .addOnSuccessListener(successListener)
+            .addOnFailureListener(failureListener)
+            .addOnCompleteListener{ imageProxy.close() }
     }
 
     @ExperimentalGetImage

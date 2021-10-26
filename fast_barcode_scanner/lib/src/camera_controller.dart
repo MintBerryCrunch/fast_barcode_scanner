@@ -79,7 +79,7 @@ class CameraController {
       DetectionMode detectionMode,
       CameraPosition position,
       ImageInversion imageInversion,
-      void Function(Barcode)? onScan) async {
+      void Function(List<String>)? onScan) async {
     state.eventNotifier.value = CameraEvent.init;
 
     try {

@@ -12,7 +12,7 @@ class MethodChannelFastBarcodeScanner extends FastBarcodeScannerPlatform {
   static const MethodChannel _channel =
       MethodChannel('com.jhoogstraat/fast_barcode_scanner');
 
-  void Function(Barcode)? _onDetectHandler;
+  void Function(List<String>)? _onDetectHandler;
 
   @override
   Future<PreviewConfiguration> init(
@@ -27,8 +27,7 @@ class MethodChannelFastBarcodeScanner extends FastBarcodeScannerPlatform {
         case 'read':
           // This might fail if the code type is not present in the list of available code types.
           // Barcode init will throw in this case.
-          final barcode = Barcode(call.arguments);
-          _onDetectHandler?.call(barcode);
+          _onDetectHandler?.call(call.arguments[0] as List<String>);
           break;
         default:
           assert(true,
@@ -71,6 +70,6 @@ class MethodChannelFastBarcodeScanner extends FastBarcodeScannerPlatform {
       .then<bool>((success) => success);
 
   @override
-  void setOnDetectHandler(void Function(Barcode) handler) =>
+  void setOnDetectHandler(void Function(List<String>) handler) =>
       _onDetectHandler = handler;
 }

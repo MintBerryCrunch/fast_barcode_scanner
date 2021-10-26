@@ -20,8 +20,8 @@ class FastBarcodeScannerPlugin: FlutterPlugin, MethodCallHandler, ActivityAware 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
     channel = MethodChannel(flutterPluginBinding.binaryMessenger, "com.jhoogstraat/fast_barcode_scanner")
 
-    reader = BarcodeReader(flutterPluginBinding.textureRegistry.createSurfaceTexture()) { barcodes ->
-      barcodes.firstOrNull()?.also { barcode -> channel.invokeMethod("read", listOf(barcodeStringMap[barcode.format], barcode.rawValue)) }
+    reader = BarcodeReader(flutterPluginBinding.textureRegistry.createSurfaceTexture()) { textEntries ->
+      channel.invokeMethod("read", textEntries)
     }
   }
 
@@ -50,7 +50,7 @@ class FastBarcodeScannerPlugin: FlutterPlugin, MethodCallHandler, ActivityAware 
     onAttachedToActivity(binding)
   }
 
-  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+  override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: io.flutter.plugin.common.MethodChannel.Result) {
     @Suppress("UNCHECKED_CAST")
     when (call.method) {
       "start" -> reader.start(call.arguments as HashMap<String, Any>, result)

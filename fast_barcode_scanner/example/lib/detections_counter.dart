@@ -14,9 +14,10 @@ class _DetectionsCounterState extends State<DetectionsCounter> {
   void initState() {
     super.initState();
     _streamToken = codeStream.stream.listen((event) {
-      final count = detectionCount.update(event.value, (value) => value + 1,
+      debugPrint("RECOGNIZED: " + event);
+      final count = detectionCount.update(event, (value) => value + 1,
           ifAbsent: () => 1);
-      detectionInfo.value = "${count}x\n${event.value}";
+      detectionInfo.value = "${count}x\n${event}";
     });
   }
 

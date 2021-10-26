@@ -4,7 +4,7 @@ import 'package:fast_barcode_scanner/fast_barcode_scanner.dart';
 import 'package:flutter/material.dart';
 import 'detections_counter.dart';
 
-final codeStream = StreamController<Barcode>.broadcast();
+final codeStream = StreamController<String>.broadcast();
 
 class ScannerScreen extends StatefulWidget {
   const ScannerScreen({Key? key}) : super(key: key);
@@ -49,12 +49,17 @@ class _ScannerScreenState extends State<ScannerScreen> {
           BarcodeType.code128,
           BarcodeType.dataMatrix
         ],
-        resolution: Resolution.hd720,
+        resolution: Resolution.hd4k,
         framerate: Framerate.fps30,
-        mode: DetectionMode.pauseVideo,
+        mode: DetectionMode.pauseDetection,
         position: CameraPosition.back,
-        imageInversion: ImageInversion.alternateFrameInversion,
-        onScan: (code) => codeStream.add(code),
+        imageInversion: ImageInversion.none,
+        onScan: (codes) {
+          for (var code in codes) {
+            debugPrint("=========== CODE: $code");
+            codeStream.add(code);
+          }
+        },
         children: [
           const MaterialPreviewOverlay(animateDetection: false),
           const BlurPreviewOverlay(),

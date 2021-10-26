@@ -38,7 +38,7 @@ class BarcodeCamera extends StatefulWidget {
   final DetectionMode mode;
   final CameraPosition position;
   final ImageInversion imageInversion;
-  final void Function(Barcode)? onScan;
+  final void Function(List<String>)? onScan;
   final List<Widget> children;
   final ErrorCallback onError;
 

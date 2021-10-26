@@ -13,19 +13,20 @@ import androidx.core.util.Consumer
 import androidx.lifecycle.LifecycleOwner
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
-import com.google.mlkit.vision.barcode.Barcode
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
-
-import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.RequestPermissionsResultListener
 import io.flutter.view.TextureRegistry
-import java.util.ArrayList
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
+import io.flutter.plugin.common.MethodChannel.Result
+import java.util.concurrent.atomic.AtomicInteger
 
 data class CameraConfig(val formats: IntArray, val mode: DetectionMode, val resolution: Resolution, val framerate: Framerate, val position: CameraPosition, val imageInversion: ImageInversion)
 
-class BarcodeReader(private val flutterTextureEntry: TextureRegistry.SurfaceTextureEntry, private val listener: (List<Barcode>) -> Unit) : RequestPermissionsResultListener {
+class BarcodeReader(
+    private val flutterTextureEntry: TextureRegistry.SurfaceTextureEntry,
+    private val listener: (List<String>) -> Unit
+) : RequestPermissionsResultListener {
     /* Android Lifecycle */
     private var activity: Activity? = null
 
@@ -53,7 +54,7 @@ class BarcodeReader(private val flutterTextureEntry: TextureRegistry.SurfaceText
         this.activity = null
     }
 
-    fun start(args: HashMap<String, Any>, result: Result) {
+    fun start(args: HashMap<String, Any>, result: io.flutter.plugin.common.MethodChannel.Result) {
         // Make sure we are connected to an activity
         if (activity == null)
             return result.error("0", "Activity not connected!", null)
@@ -87,19 +88,19 @@ class BarcodeReader(private val flutterTextureEntry: TextureRegistry.SurfaceText
         result.success(hashMapOf("textureId" to flutterTextureEntry.id(), "surfaceOrientation" to 0, "surfaceHeight" to 1280, "surfaceWidth" to 720))
     }
 
-    fun stop(result: Result? = null) {
+    fun stop(result: io.flutter.plugin.common.MethodChannel.Result? = null) {
         if (!isInitialized) return
         cameraProvider.unbindAll()
         result?.success(null)
     }
 
-    fun resume(result: Result) {
+    fun resume(result: io.flutter.plugin.common.MethodChannel.Result) {
         if (!isInitialized) return
         bindCameraUseCases()
         result.success(null)
     }
 
-    fun toggleTorch(result: Result) {
+    fun toggleTorch(result: io.flutter.plugin.common.MethodChannel.Result) {
         if (!isInitialized) return
         camera.cameraControl.enableTorch(camera.cameraInfo.torchState.value != TorchState.ON).addListener(Runnable {
             result.success(camera.cameraInfo.torchState.value == TorchState.ON)
@@ -123,21 +124,26 @@ class BarcodeReader(private val flutterTextureEntry: TextureRegistry.SurfaceText
     private fun initCamera() {
         // Init barcode Detector
         val options = BarcodeScannerOptions.Builder()
-                .setBarcodeFormats(0, *cameraConfig.formats)
-                .build()
+            .setBarcodeFormats(0, *cameraConfig.formats)
+            .build()
+        val counter = AtomicInteger(0)
 
-        barcodeDetector = MLKitBarcodeDetector(options, cameraConfig.imageInversion, OnSuccessListener { codes ->
-            if (!pauseDetection && codes.isNotEmpty()) {
-                if (cameraConfig.mode == DetectionMode.pauseDetection) {
+        barcodeDetector = MLKitBarcodeDetector(options, cameraConfig.imageInversion, OnSuccessListener { text ->
+            if (!pauseDetection && text.textBlocks.isNotEmpty()) {
+//                if (cameraConfig.mode == DetectionMode.pauseDetection) {
+//                    pauseDetection = true
+//                } else if (cameraConfig.mode == DetectionMode.pauseVideo) {
+//                    stop()
+//                }
+                val nextCounter = counter.incrementAndGet()
+                if (nextCounter > 10) {
                     pauseDetection = true
-                } else if (cameraConfig.mode == DetectionMode.pauseVideo) {
-                    stop()
                 }
-
-                listener(codes)
+                Log.e(TAG, "================= (" + nextCounter + ") Text: " + text.text)
+                listener(text.textBlocks.flatMap { it.lines }.map { it.text })
             }
         }, OnFailureListener {
-            Log.e(TAG, "Error in MLKit", it)
+            Log.e(TAG, "======================== Error in MLKit", it)
         })
 
         // Select camera
