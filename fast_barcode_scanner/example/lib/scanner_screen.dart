@@ -49,7 +49,7 @@ class _ScannerScreenState extends State<ScannerScreen> {
           BarcodeType.code128,
           BarcodeType.dataMatrix
         ],
-        resolution: Resolution.hd4k,
+        resolution: Resolution.hd1080,
         framerate: Framerate.fps30,
         mode: DetectionMode.pauseDetection,
         position: CameraPosition.back,

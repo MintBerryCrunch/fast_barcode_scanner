@@ -24,6 +24,8 @@ class MLKitBarcodeDetector(
     private val invertor = ImageInvertor(imageInversion)
     private val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
+//    private var rotation = 0
+
     @ExperimentalGetImage
     override fun analyze(imageProxy: ImageProxy) {
         val inputImage = preprocessImage(imageProxy)
@@ -31,6 +33,7 @@ class MLKitBarcodeDetector(
 //                .addOnSuccessListener(successListener)
 //                .addOnFailureListener(failureListener)
 //                .addOnCompleteListener { imageProxy.close() }
+//        Log.e("fast_barcode_scanner", "================= (settings) isThickClient: " + TextRecognizerOptions.DEFAULT_OPTIONS.isThickClient)
         textRecognizer.process(inputImage)
             .addOnSuccessListener(successListener)
             .addOnFailureListener(failureListener)
@@ -41,6 +44,8 @@ class MLKitBarcodeDetector(
     private fun preprocessImage(imageProxy: ImageProxy): InputImage {
         val originalImage = imageProxy.image!!
         invertor.invertImageIfNeeded(originalImage)
-        return InputImage.fromMediaImage(originalImage, imageProxy.imageInfo.rotationDegrees)
+//        rotation = (rotation + 90) % 360
+//        Log.e("fast_barcode_scanner", "================= (rotation): " + rotation)
+        return InputImage.fromMediaImage(originalImage, 90)
     }
 }

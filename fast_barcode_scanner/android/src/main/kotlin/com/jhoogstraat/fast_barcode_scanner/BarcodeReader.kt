@@ -136,10 +136,11 @@ class BarcodeReader(
 //                    stop()
 //                }
                 val nextCounter = counter.incrementAndGet()
-                if (nextCounter > 10) {
+                if (nextCounter > 20) {
                     pauseDetection = true
+                    counter.set(0)
                 }
-                Log.e(TAG, "================= (" + nextCounter + ") Text: " + text.text)
+                Log.e(TAG, "================= (" + nextCounter + ") Text: " + text.text + " CNT: " + text.textBlocks.size)
                 listener(text.textBlocks.flatMap { it.lines }.map { it.text })
             }
         }, OnFailureListener {
