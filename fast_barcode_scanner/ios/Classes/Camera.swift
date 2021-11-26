@@ -137,10 +137,6 @@ class Camera: NSObject {
         scanner.start()
         session.startRunning()
         isSessionRunning = session.isRunning
-
-        if torchState {
-            try toggleTorch()
-        }
     }
 
     func stop() {
