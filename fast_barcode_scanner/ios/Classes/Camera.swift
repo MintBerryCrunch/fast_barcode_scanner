@@ -149,10 +149,16 @@ class Camera: NSObject {
     func toggleTorch() throws -> Bool {
         guard captureDevice.isTorchAvailable else { return false }
 
-        try captureDevice.lockForConfiguration()
-        captureDevice.torchMode = captureDevice.isTorchActive ? .off : .on
-        captureDevice.unlockForConfiguration()
+        do {
+            try captureDevice.lockForConfiguration()
+            captureDevice.torchMode = captureDevice.isTorchActive ? .off : .on
 
+            
+            captureDevice.unlockForConfiguration()
+        } catch {
+            print("Torch could not be used \(error)")
+        }
+        torchState = captureDevice.torchMode == .on
         return captureDevice.torchMode == .on
     }
 
@@ -160,10 +166,15 @@ class Camera: NSObject {
     func setTorch(on: Bool) throws -> Bool {
         guard captureDevice.isTorchAvailable else { return false }
 
-        try captureDevice.lockForConfiguration()
-        captureDevice.torchMode = on ? .on : .off
-        captureDevice.unlockForConfiguration()
-
+        do {
+            try captureDevice.lockForConfiguration()
+            captureDevice.torchMode = on ? .on : .off
+            
+            captureDevice.unlockForConfiguration()
+        } catch {
+            print("Torch could not be used \(error)")
+        }
+        torchState = captureDevice.torchMode == .on
         return captureDevice.torchMode == .on
     }
 
